@@ -1,6 +1,10 @@
 package com.foodapp.controller;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -49,29 +53,90 @@ public class UserServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String firstName = request.getParameter("firstName");
-		String lastName = request.getParameter("lastName");
-		String userName = request.getParameter("userName");
-		String password = request.getParameter("password");
-		String userTypeStr = request.getParameter("userType");
-		UserType userType = UserType.CUSTOMER;
-		if (UserType.ADMIN.toString().equalsIgnoreCase(userTypeStr)) {
-			userType = UserType.ADMIN;
-		}
-
-		User user = new User();
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
-		user.setUserName(userName);
-		user.setPassWord(password);
-		user.setUserType(userType);
-
-		userDao.registerUser(user);
-		request.setAttribute("user", user);
-		// response.sendRedirect("");
-		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/views/UserDetails.jsp");
-		dispatcher.forward(request, response);
-
+		
+		 String username, password, email, role; 
+		 
+		 username=request.getParameter("txt_username");
+	     password=request.getParameter("txt_password"); 
+	     email=request.getParameter("txt_email");
+	     role="customer";
+	     
+	     String dburl="jdbc:mysql://localhost:3306/mysql_database"; 
+	     String dbuname="webstudent";    
+	     String dbpwd ="webstudent";
+	        
+	     try
+	        {
+	            Class.forName("com.mysql.jdbc.Driver"); 
+	            Connection con= DriverManager.getConnection(dburl,dbuname,dbpwd); 
+	            /*out.println ("database successfully opened.");*/
+	            PreparedStatement pstmt=null; 
+	            
+	            pstmt=con.prepareStatement("SELECT * FROM login WHERE email=? "); 
+	            pstmt.setString(1,email); 
+	            ResultSet rs=pstmt.executeQuery(); 
+	           
+	            if(rs.next())
+	            {
+	                String checkEmail=rs.getString("email");
+	/*                 String checkUsername=rs.getString("username");
+	 */                
+	                if(email.equals(checkEmail))    
+	                {
+	                    request.setAttribute("Msg", "sorry email already exist"); 
+	                }
+	                
+	                RequestDispatcher dispatcher =
+		               		 request.getRequestDispatcher("WEB-INF/views/UserDetails.jsp");
+		               		 dispatcher.forward(request, response);
+		               		 
+	/*                 if(username.equals(checkUsername))    
+	                {
+	                    request.setAttribute("errorMsg", "sorry username already exist"); 
+	                } */
+	            }
+	            else
+	            {
+	                pstmt=con.prepareStatement("INSERT INTO login (username, password, email, role) VALUES(?,?,?,?)"); 
+	                pstmt.setString(1,username);
+	                pstmt.setString(2,password);
+	                pstmt.setString(3,email);           
+	                pstmt.setString(4,role);
+	                pstmt.executeUpdate(); 
+	                
+	                request.setAttribute("Msg", "register successfully please login account");
+	                
+	                RequestDispatcher dispatcher =
+	               		 request.getRequestDispatcher("WEB-INF/views/UserDetails.jsp");
+	               		 dispatcher.forward(request, response);
+	            }
+	            
+	            pstmt.close();  
+	            con.close(); 
+	        }
+	        catch(Exception e)
+	        {
+	            e.printStackTrace();
+	        }
 	}
+		/*
+		 * String firstName = request.getParameter("firstName"); String lastName =
+		 * request.getParameter("lastName"); String userName =
+		 * request.getParameter("userName"); String password =
+		 * request.getParameter("password"); String userTypeStr =
+		 * request.getParameter("userType"); UserType userType = UserType.CUSTOMER; if
+		 * (UserType.ADMIN.toString().equalsIgnoreCase(userTypeStr)) { userType =
+		 * UserType.ADMIN; }
+		 * 
+		 * User user = new User(); user.setFirstName(firstName);
+		 * user.setLastName(lastName); user.setUserName(userName);
+		 * user.setPassWord(password); user.setUserType(userType);
+		 * 
+		 * userDao.registerUser(user); request.setAttribute("user", user); //
+		 * response.sendRedirect(""); RequestDispatcher dispatcher =
+		 * request.getRequestDispatcher("WEB-INF/views/UserDetails.jsp");
+		 * dispatcher.forward(request, response);
+		 */
 
 }
+

@@ -74,12 +74,23 @@
 
 
 			<div class="btn">
-				<input type="submit" value="Login"> <input type="reset"
+				<input type="submit" value="Login">
+				<input type="reset"
 					value="Reset All">
+					<a href="register"><input type="button" value="Register"> </a>
+<!-- 					<a href="UserRegistration.jsp"><input type="button" value="Register"> </a>
+ -->					
 			</div>
 
+			<div class="btn">
+    			
+   			</div>
 
 		</form>
+		
+		<!-- <div class="btn">
+		<a href="UserRegistration.jsp"><input type="button" value="Register"> </a>
+		</div> -->
 
 
 
