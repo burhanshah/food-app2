@@ -60,7 +60,10 @@ public class LoginServlet extends HttpServlet {
         
 
         try {
-            if (loginDao.validate(loginBean)) {
+        	
+        	String userValidate = loginDao.validate(loginBean);
+        	
+            if (userValidate.equals("admin")) {
 //                response.sendRedirect("loginsuccess.html");
 //            	 response.sendRedirect("WEB-INF/views/AdminPannel.jsp");
             	  
@@ -76,14 +79,26 @@ public class LoginServlet extends HttpServlet {
             	  HttpSession session = request.getSession();
             	  session.setAttribute("user", userDetails);
             	  
-            	  if (loginBean.getRole() == "admin") {
+            	 
          		// forwarding request to AdminPannel.jsp page
          			RequestDispatcher dispatcher =
          					request.getRequestDispatcher("WEB-INF/views/AdminPannel.jsp");
          				dispatcher.forward(request, response);
             	  } 
-            	  else if (loginBean.getRole() == "customer" ) {
+            	  else if (userValidate.equals("customer")) {
    	  
+            		  HashMap<String, String> userDetails = new HashMap<String, String>();
+                	  userDetails.put("username", username);
+                	  userDetails.put("password", password);
+                	  userDetails.put("role", role);
+                	  
+
+                	  // Creating a Session object and storing 
+                	  // HashMap into it
+                	  
+                	  HttpSession session = request.getSession();
+                	  session.setAttribute("user", userDetails);
+                	  
             		// forwarding request to WelcomeUser.jsp page
             		  RequestDispatcher dispatcher =
                			 request.getRequestDispatcher("WEB-INF/views/WelcomeUser.jsp");
@@ -107,8 +122,12 @@ public class LoginServlet extends HttpServlet {
 //               	dispatcher.forward(request, response);
 //            	}
             	
-            } else {
-                HttpSession session = request.getSession();
+            else {
+               // HttpSession session = request.getSession();
+            	System.out.println("Error message = "+userValidate);
+                request.setAttribute("errMessage", userValidate);
+     
+                request.getRequestDispatcher("/JSP/index.jsp").forward(request, response);
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

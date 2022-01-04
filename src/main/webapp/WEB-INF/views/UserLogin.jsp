@@ -46,8 +46,9 @@
 
 		<form id="forms" action="<%= request.getContextPath() %>/userlogin" method="post" >
 
-
+			
 			<div id="field">
+				<!-- Added Selection for User Type -->
 				<label for="role">Choose a User Type:</label>
 				
 				<select name="role" id="field">
