@@ -1,3 +1,4 @@
+<%@page import="com.foodapp.model2.*"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
@@ -45,7 +46,9 @@
 	<section id="admin">
 		<h1>Welcome!!</h1>
 		<h3>Please select restraunt of your choice!!</h3>
-	<h4><%= session.getAttribute("userName") %></h4>
+		<h4>
+			${userName}
+		</h4>
 		<div id="pannel">
 
 			<a href="restraunt?name=habib" name="habib">

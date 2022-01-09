@@ -9,9 +9,10 @@ public class LoginBean implements Serializable {
     private String username;
     private String password;
     private String role;
+    private UserType userType;
 
-    public String getRole() {
-		return role;
+    public UserType getRole() {
+		return userType;
 	}
 
 	public void setRole(String role) {
@@ -33,4 +34,8 @@ public class LoginBean implements Serializable {
     public void setPassword(String password) {
         this.password = password;
     }
+
+	public void setRole(UserType userType) {
+		this.userType = userType;
+	}
 }

@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.foodapp.dao.OrderDao;
+import com.foodapp.model2.User;
+
 /**
  * Servlet implementation class LogoutServlet
  */
@@ -32,11 +35,18 @@ public class LogoutServlet extends HttpServlet {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
 		
+		// Remove all pending orders, if user log out before checkin
+		User user = (User) request.getSession().getAttribute("user");
+		if(user != null) {
+			OrderDao.removePendingOrdersOfUser(user);
+		}
+
 		//Clear all session data
 		Iterator<String> iterator = request.getSession().getAttributeNames().asIterator();
 		while(iterator.hasNext()) {
 			request.getSession().removeAttribute(iterator.next());
 		}
+		
 		
 		dispatcher.forward(request, response);
 	}

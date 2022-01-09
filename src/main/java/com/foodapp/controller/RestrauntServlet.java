@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.foodapp.dao.util.DBManager;
 import com.foodapp.model.Restraunt;
+import com.foodapp.model2.Restaurant;
 import com.foodapp.services.ApiServices;
 
 /**
@@ -37,9 +39,11 @@ public class RestrauntServlet extends HttpServlet {
 		
 		String resname = request.getParameter("name");
 
-		Restraunt res = ApiServices.getRestraunts(resname);
-		request.setAttribute("restraunt", res);
-		request.setAttribute("menu", res.getMenu());
+		Restaurant rest = DBManager.getRestaurantByName(resname);
+		
+//		Restraunt res = ApiServices.getRestraunts(resname);
+		request.setAttribute("restraunt", rest);
+		request.setAttribute("menu", rest.getMenu());
 
 		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/views/Restraunts.jsp");
 		dispatcher.forward(request, response);
