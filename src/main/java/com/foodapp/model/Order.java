@@ -9,6 +9,9 @@ public class Order {
 	private String address;
 	private String contact;
 	private String comments;
+	private int restaurantId;
+	private int userId;
+	private String offerCode;
 	
 	
 	
@@ -108,6 +111,33 @@ public class Order {
 
 	public void setTotalPrice(Float totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+
+	public void setRestaurantId(int id) {
+		this.restaurantId = id;
+	}
+	
+	public int getRestaurantId() {
+		return restaurantId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	
+	public int getUserId() {
+		return userId;
+	}
+	
+	public String getOfferCode() {
+		if(offerCode == null || offerCode.trim().isBlank()) {
+			return "NOOFFER_" + restaurantId;
+		}
+		return offerCode;
+	}
+	
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
 	}
 
 }

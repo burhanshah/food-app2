@@ -5,10 +5,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.foodapp.dao.util.DBManager;
 import com.foodapp.model.LoginBean;
+import com.foodapp.model.UserType;
+import com.foodapp.model2.User;
 
 public class LoginDao {
 
+	private LoginBean user;
+	
+	public LoginDao(LoginBean user) {
+		this.user = user;
+	}
+	
+	public User validate() {
+		User loginUser = null;
+		if(UserType.ADMIN.equals(user.getRole())) {
+			loginUser = DBManager.getOwner(user.getUsername(), user.getPassword());
+		} else if (UserType.CUSTOMER.equals(user.getRole())) {
+			loginUser = DBManager.getUser(user.getUsername(), user.getPassword());
+		}
+		return loginUser;
+	}
+	
     public String validate(LoginBean loginBean) throws ClassNotFoundException {
        // String status = "";
 
@@ -16,7 +35,7 @@ public class LoginDao {
 
         String username = loginBean.getUsername();
     	String password = loginBean.getPassword();
-    	String role = loginBean.getRole();
+//    	String role = loginBean.getRole();
     	
     	String usernameDB = "";
         String passwordDB = "";
@@ -31,7 +50,7 @@ public class LoginDao {
             .prepareStatement("select * from login where username = ? and password = ? and role = ? ")) {
             preparedStatement.setString(1, loginBean.getUsername());
             preparedStatement.setString(2, loginBean.getPassword());
-            preparedStatement.setString(3, loginBean.getRole());
+//            preparedStatement.setString(3, loginBean.getRole());
             
             
             System.out.println(preparedStatement);

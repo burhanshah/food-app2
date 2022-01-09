@@ -1,3 +1,4 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -71,12 +72,12 @@
 				</div>
 			</div>
 
-
+			<p id="loginMsg" style="font-size: 20px;color: red;">${loginStatus}</p>
 
 			<div class="btn">
 				<input type="submit" value="Login">
 				<input type="reset"
-					value="Reset All">
+					value="Reset All" onclick="document.getElementById('loginMsg').innerText = ''">
 					<a href="register"><input type="button" value="Register"> </a>
 <!-- 					<a href="UserRegistration.jsp"><input type="button" value="Register"> </a>
  -->					

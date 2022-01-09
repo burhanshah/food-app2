@@ -1,3 +1,4 @@
+<%@page import="com.foodapp.model2.*"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
@@ -33,7 +34,8 @@
 			<div id="right">
 				<li><a href="logout">Logout<i class="fas fa-user-tie"></i></a></li>
 
-				</a></li>
+				</a>
+				</li>
 			</div>
 		</nav>
 	</header>
@@ -41,21 +43,25 @@
 
 	<section id="admin">
 		<h1>Administration Pannel</h1>
-<h4><%= session.getAttribute("userType") %></h4>
+		<h3>Restaurant : <%=((Owner) session.getAttribute("user")).getRestaurant().getName() %> </h3>
+		<h4>
+			Welcome,
+			<%= ((User) session.getAttribute("user")).getUserName() %>
+		</h4>
 
 		<div id="pannel">
 
 			<a href="#">
 				<div class="opt">
-					<i class="fas fa-plus-circle"></i> <span>Add Resturant</span>
+					<i class="fas fa-plus-circle"></i> <span>Add/Update Menu</span>
 				</div>
 			</a> <a href="#">
 				<div class="opt">
-					<i class="fas fa-minus-circle"></i> <span>Remove Resturant</span>
+					<i class="fas fa-minus-circle"></i> <span>Remove Menu</span>
 				</div>
-			</a> <a href="WelcomeUser">
+			</a> <a href="restraunt?name=<%=((Owner) session.getAttribute("user")).getRestaurant().getName() %>">
 				<div class="opt">
-					<i class="fas fa-eye"></i> <span>View Restraunts</span>
+					<i class="fas fa-eye"></i> <span>View Menu</span>
 				</div>
 			</a> <a href="#">
 				<div class="opt">
@@ -70,7 +76,7 @@
 
 		<div id="pannel">
 
-			<a href="OrderServlet">
+			<a href="OrderServlet?userName=<%=((Owner) session.getAttribute("user")).getUserName() %>">
 				<div class="opt">
 					<i class="fas fa-hamburger"></i> <span>View Order</span>
 				</div>

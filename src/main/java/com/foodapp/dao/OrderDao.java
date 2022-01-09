@@ -1,13 +1,17 @@
 package com.foodapp.dao;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.foodapp.model.Item;
-import com.foodapp.model.Menu;
-import com.foodapp.model.Order;
-import com.foodapp.model.Restraunt;
+import com.foodapp.dao.util.DBManager;
+import com.foodapp.model2.FoodItem;
+import com.foodapp.model2.Menu;
+import com.foodapp.model2.Order;
+import com.foodapp.model2.Owner;
+import com.foodapp.model2.Restaurant;
+import com.foodapp.model2.User;
 
 public class OrderDao {
 	private static List<Order> orders = new ArrayList<>();
@@ -16,15 +20,17 @@ public class OrderDao {
 		return orders;
 	}
 	
-	public static Order addOrder(String user, Map<String, String[]> parameterMap, String resname) {
-		RestrauntUtil resUtil = new RestrauntUtil();
-		Restraunt res = resUtil.getRestrauntByName(resname);
+	public static Order addOrder(User user, Map<String, String[]> parameterMap, String resname) {
+		Restaurant res = DBManager.getRestaurantByName(resname);
 
-		// Create new order
+		// Create new order, this is in memory, once order is placed and user checkout,
+		// remove it from this list and add to db
 		Order order = new Order();
-		order.setOrderId(orders.size() + 1); // It should come from DB
+		order.setOrderId(orders.size() + 1);
 		order.setResName(resname);
-		order.setUser(user);
+		order.setRestaurantId(res.getId());
+		order.setUser(user.getUserName());
+		order.setUserId(user.getUserId());
 
 		Menu orderMenu = new Menu();
 
@@ -54,9 +60,9 @@ public class OrderDao {
 	}
 
 	// Method overloading
-	private static float calculatePrice(List<Item> items) {
+	private static float calculatePrice(List<FoodItem> items) {
 		float p = 0.0F;
-		for (Item i : items) {
+		for (FoodItem i : items) {
 			p += i.getPrice();
 		}
 		return p;
@@ -64,8 +70,8 @@ public class OrderDao {
 	
 	// List<Item> veg => [('dal fry', 56), ('chana dal', 67) ... ) 
 	// ["1", ""]
-	private static List<Item> calculateMenu(List<Item> veg, String[] qty) {
-		List<Item> items = new ArrayList<>();
+	private static List<FoodItem> calculateMenu(List<FoodItem> veg, String[] qty) {
+		List<FoodItem> items = new ArrayList<>();
 		if (qty == null || qty.length == 0) {
 			return new ArrayList<>();
 		}
@@ -78,7 +84,7 @@ public class OrderDao {
 			String name = veg.get(i).getName();
 			float price = veg.get(i).getPrice();
 
-			items.add(new Item(name, (price * item_qty), item_qty));
+			items.add(new FoodItem(name, (price * item_qty), item_qty));
 		}
 
 		return items;
@@ -98,6 +104,41 @@ public class OrderDao {
 	public void addOrderDetails(Map<String, String[]> parameterMap) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public static Order getLastOrderofUser(String userName) {
+		List<Order> ordersOfUser = getOrderByUser(userName);
+		if(!ordersOfUser.isEmpty()) {
+			return ordersOfUser.get(ordersOfUser.size() - 1);
+		}
+		return null;
+	}
+
+	public static void removePendingOrdersOfUser(User user) {
+		if(user == null) {
+			return;
+		}
+		Iterator<Order> orderItr = orders.iterator();
+		while(orderItr.hasNext()) {
+			Order order = orderItr.next();
+			if(order.getUser().equalsIgnoreCase(user.getUserName()) && order.getUserId() == user.getUserId()) {
+				orderItr.remove();
+			}
+		}
+	}
+
+	public static void placeOrder(Order order) {
+		if(order != null) {
+			// Insert order to DB
+			DBManager.addOrder(order);
+		}
+	}
+
+	public static List<Order> getAllOrdersForAdmin(Object user) {
+		if(user instanceof Owner) {
+			return DBManager.getAllOrderForAdmin(((Owner)user).getUserName());
+		}
+		return null;
 	}
 
 }
